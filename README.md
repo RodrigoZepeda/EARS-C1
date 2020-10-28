@@ -1,21 +1,21 @@
 # EARS-C1
 Implementation of EARS-C1 algorithm in Julia. To run just include the function in your code:
 
-```
+```julia
 #Setup in Julia
 include("EARS_C1.jl")
 ```
 
 and run the function over any list of cases observed at the same time step:
 
-```
+```julia
 #Running in Julia
 cases = [1,2,1,0,0,1,2,3,1,1,0,0,0,1,2,1,1,1,1,0,0,0,1,1]
 detected = EARS_C1(cases, initial_date = 1)
 ```
 
 You can also run the algorithm from `R` using `JuliaCall`:
-```
+```R
 #Setup in R
 library(JuliaCall)
 julia <- julia_setup()
@@ -23,26 +23,27 @@ julia_command('include("EARS_C1.jl")')
 ```
 
 and then call the function:
-```
+```R
 cases    <- rpois(100,20)                #Simulate cases
 julcases <- julia_eval("EARS_C1")(cases) #Evaluate function
 ```
 
 The algorithm is faster than current implementation in the `surveillance` package:
 
-```
+```R
 library(surveillance)
 library(microbenchmark)
 #Comparación de tiempos
 mb <- microbenchmark(
   cases    <- rpois(100, 20),
   julcases <- julia_eval("EARS_C1")(cases),
-  surv     <- earsC(as(ts(cases, start = 1),"sts"), control = list(method = "C1", alpha = 0.05, baseline = 7, minSigma = 0)),
+  surv     <- earsC(as(ts(cases, start = 1),"sts"), 
+                    control = list(method = "C1", alpha = 0.05, baseline = 7, minSigma = 0)),
   times = 1000
 )
 ```
 
-With results:
+With results 10 times faster:
 <table>
  <thead>
   <tr>
